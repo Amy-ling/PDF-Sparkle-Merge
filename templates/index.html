@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ PDF Sparkle Merge ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='js/Sortable.min.js') }}"></script>
+</head>
+<body>
+    <div class="theme-toggle">
+        <label class="switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider round"></span>
+        </label>
+        <span id="themeIcon" style="font-size: 1.5em;">☀️</span>
+    </div>
+
+    <div class="container">
+        <h1>✨ PDF Sparkle Merge ✨</h1>
+        <p><strong>Let's get this PDF party started! 🎈 <br>
+            You'll need <strong>2 or more PDF pals</strong>. <br>
+            Feel free to <strong>drag & drop</strong> or <strong>select them individually</strong>, <br>
+            and then <strong>arrange them in your preferred order</strong> before merging!</strong></p>
+
+        <!-- The file input is separate and hidden -->
+        <input type="file" id="fileInput" accept="application/pdf" multiple hidden />
+
+        <!-- The drop area for file uploads -->
+        <div id="dropArea" class="drop-area">
+            <div id="dropAreaInitialPrompt" class="drop-area-prompt">
+                <p><span class="drop-area-icon">🚀</span> Drag & Drop PDF files here <br>or click to select your magic scrolls!</p>
+            </div>
+            <div id="dropAreaCompactPrompt" class="drop-area-prompt" style="display: none;">
+                <p>+ Add More PDFs</p>
+            </div>
+        </div>
+
+        <!-- The container for the list of uploaded files, now separate -->
+        <div id="fileListContainer" style="display: none;">
+            <ul id="fileList" class="file-list"></ul>
+        </div>
+
+        <div class="rename-section">
+            <label for="mergedFileNameInput">Rename merged file (optional):</label>
+            <input type="text" id="mergedFileNameInput" placeholder="e.g., my_awesome_compilation">
+            <span class="file-extension">.pdf</span>
+        </div>
+
+        <button type="button" id="merge-btn">
+            <span class="button-icon">✨</span>
+            <span>Combine PDFs!</span>
+        </button>
+
+        <div id="progressBar" class="progress-bar" style="display: none;"><div class="bar"></div></div>
+
+        <div id="downloadArea">
+        </div>
+    </div>
+
+    <script>
+        // DOM Element References
+        const fileInput = document.getElementById('fileInput');
+        const dropArea = document.getElementById('dropArea');
+        const fileList = document.getElementById('fileList');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const dropAreaInitialPrompt = document.getElementById('dropAreaInitialPrompt');
+        const dropAreaCompactPrompt = document.getElementById('dropAreaCompactPrompt');
+        const mergeBtn = document.getElementById('merge-btn');
+        const downloadArea = document.getElementById('downloadArea');
+        const mergedFileNameInput = document.getElementById('mergedFileNameInput');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+
+        // State Management
+        let filesArray = [];
+        let sortable = null;
+
+        // --- Event Listeners ---
+
+        dropAreaInitialPrompt.addEventListener('click', () => fileInput.click());
+        dropAreaCompactPrompt.addEventListener('click', () => fileInput.click());
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('highlight');
+        });
+
+        dropArea.addEventListener('dragleave', () => dropArea.classList.remove('highlight'));
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('highlight');
+            handleUploadedFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => handleUploadedFiles(e.target.files));
+        themeToggle.addEventListener('change', () => setTheme(themeToggle.checked));
+        mergeBtn.addEventListener('click', mergeFiles);
+
+        // --- Core Functions ---
+
+        function handleUploadedFiles(uploadedFiles) {
+            const newFiles = Array.from(uploadedFiles);
+            newFiles.forEach(file => {
+                if (file.type === 'application/pdf' && !filesArray.some(f => f.name === file.name && f.size === file.size)) {
+                    filesArray.push(file);
+                } else {
+                    console.warn(`File ignored (not a PDF or duplicate): ${file.name}`);
+                }
+            });
+            fileInput.value = ''; // Reset input
+            rerenderListAndUI(); // Trigger a full redraw for new files
+        }
+
+        /**
+         * Master function for redraws. Called ONLY when files are added or removed.
+         */
+        function rerenderListAndUI() {
+            renderFileList();
+            updatePromptsVisibility();
+            updateMergeButtonState();
+            updateRenamePlaceholder();
+            initializeSortable(); // Re-init sortable after the DOM is rebuilt
+        }
+
+        function renderFileList() {
+            fileList.innerHTML = ''; // Clear existing list
+            filesArray.forEach(file => {
+                const li = document.createElement('li');
+                li.className = 'file-item';
+                li.dataset.id = file.name; // Use a stable identifier
+
+                const fileNameSpan = document.createElement('span');
+                fileNameSpan.className = 'file-name';
+                fileNameSpan.textContent = `📄 ${file.name}`;
+
+                const removeBtn = document.createElement('span');
+                removeBtn.className = 'remove-file';
+                removeBtn.innerHTML = '✖';
+                removeBtn.setAttribute('role', 'button');
+                removeBtn.setAttribute('aria-label', `Remove ${file.name}`);
+                
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    filesArray = filesArray.filter(f => f.name !== file.name);
+                    rerenderListAndUI(); // A file was removed, so trigger a full redraw
+                });
+
+                li.appendChild(fileNameSpan);
+                li.appendChild(removeBtn);
+                fileList.appendChild(li);
+            });
+        }
+
+        function initializeSortable() {
+            if (sortable) {
+                sortable.destroy();
+                sortable = null; // Explicitly nullify the instance
+            }
+            if (filesArray.length > 1) {
+                sortable = new Sortable(fileList, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    onEnd: (evt) => {
+                        // Drag-and-drop ended. ONLY update the array and placeholder.
+                        // DO NOT re-render the list here. Sortable.js handles the DOM.
+                        const [movedItem] = filesArray.splice(evt.oldIndex, 1);
+                        filesArray.splice(evt.newIndex, 0, movedItem);
+                        updateRenamePlaceholder();
+                    }
+                });
+            }
+        }
+
+        function updatePromptsVisibility() {
+            const hasFiles = filesArray.length > 0;
+            fileListContainer.style.display = hasFiles ? 'block' : 'none';
+            dropAreaInitialPrompt.style.display = hasFiles ? 'none' : 'flex';
+            dropAreaCompactPrompt.style.display = hasFiles ? 'flex' : 'none';
+            dropArea.classList.toggle('compact-mode', hasFiles);
+        }
+
+        function updateMergeButtonState() {
+            mergeBtn.disabled = filesArray.length < 2;
+        }
+
+        function updateRenamePlaceholder() {
+            mergedFileNameInput.placeholder = generatePlaceholderName();
+        }
+
+        function generatePlaceholderName() {
+            if (filesArray.length === 0) {
+                return "e.g., my_awesome_compilation";
+            }
+            let placeholder = filesArray.slice(0, 2)
+                .map(f => sanitizeFilenamePart(f.name))
+                .filter(name => name)
+                .join('_');
+            if (filesArray.length > 2) placeholder += '_etc';
+            if (filesArray.length > 1) placeholder += '_merged';
+            return placeholder || "e.g., my_awesome_compilation";
+        }
+
+        function getFinalFilename() {
+            const customNameRaw = mergedFileNameInput.value.trim();
+            if (customNameRaw) {
+                const sanitizedCustom = sanitizeFilenamePart(customNameRaw);
+                if (sanitizedCustom) return `${sanitizedCustom}.pdf`;
+            }
+            const placeholderName = generatePlaceholderName();
+            if (placeholderName === "e.g., my_awesome_compilation") {
+                return "merged_document.pdf";
+            }
+            return `${placeholderName}.pdf`;
+        }
+
+        function sanitizeFilenamePart(filenamePart) {
+            if (!filenamePart || typeof filenamePart !== 'string') return '';
+            let name = filenamePart.replace(/\.pdf$/i, '');
+            name = name.replace(/[\\/:*?"<>|#%&{}\s]/g, '_').replace(/_+/g, '_');
+            name = name.replace(/^_+|_+$/g, '');
+            return name;
+        }
+
+        async function mergeFiles() {
+            if (filesArray.length < 2) return;
+
+            mergeBtn.disabled = true;
+            const formData = new FormData();
+            filesArray.forEach(file => formData.append('pdfs[]', file));
+
+            const finalFilename = getFinalFilename();
+            formData.append('filename', finalFilename);
+
+            const progress = document.getElementById('progressBar');
+            const bar = document.querySelector('.bar');
+            progress.style.display = 'block';
+            bar.style.width = '0%';
+            downloadArea.innerHTML = '';
+
+            try {
+                const response = await fetch('/merge', { method: 'POST', body: formData });
+                bar.style.width = '100%';
+                if (!response.ok) throw new Error(await response.text());
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = finalFilename;
+                a.textContent = '🎉 Download Your Merged PDF! 🎉';
+                a.className = 'download-link';
+                downloadArea.appendChild(a);
+                a.click();
+            } catch (error) {
+                console.error('Merge failed:', error);
+                progress.style.display = 'none';
+            } finally {
+                mergeBtn.disabled = false;
+            }
+        }
+
+        function setTheme(isDark) {
+            body.classList.toggle('dark-mode', isDark);
+            themeToggle.checked = isDark;
+            themeIcon.textContent = isDark ? '🌙' : '☀️';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // --- Initial Page Load ---
+        function initializePage() {
+            const savedTheme = localStorage.getItem('theme');
+            setTheme(savedTheme === 'dark');
+            filesArray = [];
+            rerenderListAndUI();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializePage);
+
+    </script>
+</body>
+</html>

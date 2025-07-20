@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv
+venv
+
+# IDE configuration
+.idea/
+
+# Temporary files created by the application
+uploads/
+merged/
+
+# Log files
+*.log

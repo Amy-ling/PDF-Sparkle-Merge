@@ -1,0 +1,579 @@
+body {
+    font-family: 'Nunito', Arial, sans-serif;
+    background-color: #F0F8FF;
+    color: #334756;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+    padding: 0;
+}
+
+.dark-mode {
+    background-color: #0A1931;
+    color: #F0F0F0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #FFFFFF;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 169, 255, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-mode .container {
+    background: #1E2A47;
+    box-shadow: 0 4px 15px rgba(29, 233, 182, 0.2);
+}
+
+h1 {
+    text-align: center;
+    font-weight: 800;
+    font-size: 2.5em;
+    color: #00A9FF;
+    margin-bottom: 20px;
+}
+
+.dark-mode h1 {
+    color: #1DE9B6;
+}
+
+.drop-area {
+    border: 3px dashed #aaa;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+}
+
+/* When files are added, we reduce the padding and let the content define the height */
+.drop-area.has-files {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+
+.dark-mode .drop-area {
+    border-color: #555;
+}
+
+.drop-area.highlight {
+    background-color: #e0f7fa;
+    border-color: #00A9FF;
+    border-style: solid;
+    transform: scale(1.02);
+}
+
+.dark-mode .drop-area.highlight {
+    background-color: rgba(29, 233, 182, 0.15);
+    border-color: #1DE9B6;
+}
+
+.drop-area-prompt p {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #007BFF;
+    line-height: 1.5;
+}
+
+.dark-mode .drop-area-prompt p {
+    color: #1DE9B6;
+}
+
+.drop-area-icon {
+    font-size: 1.5em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+
+
+.drop-area.compact-mode {
+    padding: 15px 20px;
+    min-height: auto;
+    border-style: dashed;
+}
+
+#dropAreaCompactPrompt p {
+    font-size: 1em;
+    font-weight: 600;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: rgba(0, 169, 255, 0.1);
+    color: #007BFF;
+    transition: background-color 0.2s ease;
+}
+
+.dark-mode #dropAreaCompactPrompt p {
+    background-color: rgba(29, 233, 182, 0.15);
+    color: #1DE9B6;
+}
+
+#dropAreaCompactPrompt p:hover {
+    background-color: rgba(0, 169, 255, 0.2);
+}
+
+.dark-mode #dropAreaCompactPrompt p:hover {
+    background-color: rgba(29, 233, 182, 0.25);
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.separator {
+    border-top: 2px dashed #ccc;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.dark-mode .separator {
+    border-top-color: #555;
+}
+
+
+.file-item {
+    background: #e6f7ff;
+    color: #334756;
+    margin: 8px 0;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #b3e5fc;
+    box-shadow: 0 2px 4px rgba(0, 169, 255, 0.1);
+    cursor: move;
+    transition: background-color 0.2s, transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-item:hover {
+    background-color: #d0efff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 169, 255, 0.15);
+}
+
+.dark-mode .file-item {
+    background: #2a3b5a;
+    color: #e0e0e0;
+    border: 1px solid #3a4b6a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.dark-mode .file-item:hover {
+    background-color: #34496f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+}
+
+/* Styling for the '✖' icon */
+.file-item .remove-file {
+    color: #ff6b6b;
+    font-weight: bold;
+    padding: 5px; /* Increased padding for a larger click area */
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    cursor: pointer; /* Added pointer cursor */
+}
+
+.file-item .remove-file:hover {
+    color: #e03131;
+    background-color: rgba(255, 107, 107, 0.15);
+    transform: scale(1.1);
+}
+
+.dark-mode .file-item .remove-file {
+    color: #ff8787;
+}
+
+.dark-mode .file-item .remove-file:hover {
+    color: #ff6b6b;
+    background-color: rgba(255, 135, 135, 0.15);
+}
+
+
+
+body:not(.dark-mode) button#merge-btn {
+    background-image: linear-gradient(45deg, #007BFF, #00A9FF);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+}
+
+body:not(.dark-mode) button#merge-btn:hover {
+    background-image: linear-gradient(45deg, #006fe6, #0098e6);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+    transform: translateY(-3px);
+}
+
+/* Dark Mode Button Styling */
+.dark-mode button#merge-btn {
+    background-image: linear-gradient(45deg, #1DE9B6, #16a085);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(29, 233, 182, 0.3);
+}
+
+.dark-mode button#merge-btn:hover {
+    background-image: linear-gradient(45deg, #1ad8a9, #149075);
+    box-shadow: 0 6px 20px rgba(29, 233, 182, 0.4);
+    transform: translateY(-3px);
+}
+
+
+button#merge-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+
+button#merge-btn:disabled,
+button#merge-btn:disabled:hover {
+    background-image: none !important;
+    background-color: #cccccc !important;
+    color: #888888 !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    transform: translateY(0) !important;
+    opacity: 0.6;
+}
+
+.dark-mode button#merge-btn:disabled,
+.dark-mode button#merge-btn:disabled:hover {
+    background-image: none !important;
+    background-color: #555555 !important;
+    color: #aaaaaa !important;
+}
+
+
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #b3e5fc;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.dark-mode .progress-bar {
+    background-color: #3a4b6a;
+}
+
+.bar {
+    width: 0;
+    height: 100%;
+    background-color: #1DE9B6;
+    animation: progress 2s ease-out forwards;
+    /*  I admit that this is somtime slower than the actual process but please just enjoy the animation  */
+    border-radius: 5px;
+}
+
+@keyframes progress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #E0E0E0;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #00A9FF;
+}
+
+.dark-mode input:checked + .slider {
+    background-color: #1DE9B6;
+}
+
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Download Link Styling */
+.download-link {
+    color: #007BFF;
+    font-weight: bold;
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.2s ease-in-out;
+}
+
+body:not(.dark-mode) .download-link {
+     background-color: #e6f7ff;
+     border: 1px solid #b3e5fc;
+     color: #007bff;
+}
+
+
+body:not(.dark-mode) .download-link:hover {
+    color: #0056b3;
+    background-color: #d0efff;
+    transform: scale(1.05);
+}
+
+.dark-mode .download-link {
+    color: #82d8ff;
+    background-color: rgba(130, 216, 255, 0.15);
+    border: 1px solid rgba(130, 216, 255, 0.3);
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+.dark-mode .download-link:hover {
+    color: #a9e9ff;
+    background-color: rgba(130, 216, 255, 0.25);
+    transform: scale(1.05);
+}
+
+/* Styling for the  '✖' icon */
+.file-item .remove-file {
+    color: #ff6b6b;
+    font-weight: bold;
+    padding: 0 5px;
+    transition: color 0.2s ease;
+}
+
+.file-item .remove-file:hover {
+    color: #e03131;
+    transform: scale(1.1);
+}
+
+.dark-mode .file-item .remove-file {
+    color: #ff8787;
+}
+
+.dark-mode .file-item .remove-file:hover {
+    color: #ff6b6b;
+}
+
+
+.sortable-ghost {
+    opacity: 0.4;
+    background: #c8ebfb;
+}
+.dark-mode .sortable-ghost {
+    background: #3a5a78;
+}
+
+
+.sortable-chosen {
+    box-shadow: 0 5px 15px rgba(0, 169, 255, 0.3);
+}
+.dark-mode .sortable-chosen {
+    box-shadow: 0 5px 15px rgba(29, 233, 182, 0.3);
+}
+
+.rename-section {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #e6f7ff;
+    border: 1px solid #b3e5fc;
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0, 169, 255, 0.05);
+}
+
+.dark-mode .rename-section {
+    background-color: #2a3b5a;
+    border-color: #3a4b6a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.rename-section label {
+    font-weight: 700;
+    font-size: 0.95em;
+    color: #007BFF;
+    flex-shrink: 0;
+}
+
+.dark-mode .rename-section label {
+    color: #82d8ff;
+}
+
+.rename-section input[type="text"] {
+    flex-grow: 1;
+    min-width: 200px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #b3e5fc;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1em;
+    color: #334756;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dark-mode .rename-section input[type="text"] {
+    background-color: #1E2A47;
+    border-color: #3a4b6a;
+    color: #F0F0F0;
+}
+
+.rename-section input[type="text"]::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.dark-mode .rename-section input[type="text"]::placeholder {
+    color: #777;
+}
+
+.rename-section input[type="text"]:focus {
+    outline: none;
+    border-color: #00A9FF;
+    box-shadow: 0 0 0 3px rgba(0, 169, 255, 0.2);
+}
+
+.dark-mode .rename-section input[type="text"]:focus {
+    border-color: #1DE9B6;
+    box-shadow: 0 0 0 3px rgba(29, 233, 182, 0.25);
+}
+
+.rename-section .file-extension {
+    font-size: 1em;
+    font-weight: 600;
+    color: #555;
+    padding-left: 2px;
+    flex-shrink: 0;
+}
+
+.dark-mode .rename-section .file-extension {
+    color: #bbb;
+}
+
+button#merge-btn {
+    width: 100%; /* Full width */
+    padding: 15px 20px; /* Larger padding */
+    font-size: 1.25em; /* Larger font */
+    font-weight: 700;
+    border-radius: 8px; /* Modern border-radius */
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+    margin-top: 20px;
+}
+
+.button-icon {
+    font-size: 1.2em;
+}
+
+body:not(.dark-mode) button#merge-btn {
+    background-image: linear-gradient(45deg, #007BFF, #00A9FF);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+body:not(.dark-mode) button#merge-btn:hover {
+    background-image: linear-gradient(45deg, #006fe6, #0098e6);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+body:not(.dark-mode) button#merge-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Dark Mode Button Styling */
+.dark-mode button#merge-btn {
+    background-image: linear-gradient(45deg, #1DE9B6, #16a085);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(29, 233, 182, 0.2);
+}
+
+.dark-mode button#merge-btn:hover {
+    background-image: linear-gradient(45deg, #1ad8a9, #149075);
+    box-shadow: 0 6px 20px rgba(29, 233, 182, 0.3);
+    transform: translateY(-2px);
+}
+
+.dark-mode button#merge-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(29, 233, 182, 0.2);
+}
+
+button#merge-btn:disabled,
+button#merge-btn:disabled:hover {
+    background-image: none;
+    background-color: #e9ecef;
+    color: #adb5bd;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.dark-mode button#merge-btn:disabled,
+.dark-mode button#merge-btn:disabled:hover {
+    background-color: #343a40;
+    color: #6c757d;
+}
