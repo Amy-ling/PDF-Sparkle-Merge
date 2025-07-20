@@ -1,5 +1,7 @@
 # ✨ PDF Sparkle Merge ✨
 
+A privacy-focused PDF merging tool designed for local use. Your documents never leave your computer.
+
 A simple yet stylish web application built with Flask to merge multiple PDF files into one. It features a modern, user-friendly interface with drag-and-drop support, file reordering, and a dark/light theme toggle.
 
 ## 🚀 Features
